@@ -98,7 +98,7 @@ describe('DiamondTest', async function () {
   it('should replace supportsInterface function', async () => {
     const Test1Facet = await ethers.getContractFactory('Test1Facet')
     const selectors = getSelectors(Test1Facet).get(['supportsInterface(bytes4)'])
-    const testFacetAddress = addresses[3]
+    const testFacetAddress = addresses[4]
     tx = await diamondCutFacet.diamondCut(
       [{
         facetAddress: testFacetAddress,
@@ -150,7 +150,7 @@ describe('DiamondTest', async function () {
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
-    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[4])
+    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[5])
     assert.sameMembers(result, getSelectors(test2Facet).get(functionsToKeep))
   })
 
@@ -169,7 +169,7 @@ describe('DiamondTest', async function () {
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
-    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[3])
+    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[4])
     assert.sameMembers(result, getSelectors(test1Facet).get(functionsToKeep))
   })
 
