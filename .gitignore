@@ -3,4 +3,5 @@ node_modules
 #Hardhat files
 cache
 artifacts
+.envpackage-lock.json
 .env
