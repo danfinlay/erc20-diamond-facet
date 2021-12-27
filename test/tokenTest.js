@@ -28,10 +28,13 @@ describe('DiamondTest', async function () {
     diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
     ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
     tokenFacet = await ethers.getContractAt('ERC20Facet', diamondAddress)
-    await tokenFacet.setupERC20Token('TestToken', 'TTN', 18);
+    await tokenFacet.setupERC20Token('TestToken', 'TTN', 18)
   })
 
   it('facets should have the right function selectors -- call to facetFunctionSelectors function', async () => {
+    for (const address of await diamondLoupeFacet.facetAddresses()) {
+      addresses.push(address)
+    }
     let selectors = getSelectors(diamondCutFacet)
     result = await diamondLoupeFacet.facetFunctionSelectors(addresses[0])
     assert.sameMembers(result, selectors)
@@ -41,14 +44,14 @@ describe('DiamondTest', async function () {
     selectors = getSelectors(ownershipFacet)
     result = await diamondLoupeFacet.facetFunctionSelectors(addresses[2])
     assert.sameMembers(result, selectors)
+    selectors = getSelectors(tokenFacet)
     result = await diamondLoupeFacet.facetFunctionSelectors(addresses[3])
     assert.sameMembers(result, selectors)
   })
 
-  it("Deployment should assign the total supply of tokens to the owner", async function () {
-    const owner = await ownershipFacet.owner();
-    const ownerBalance = await tokenFacet.balanceOf(owner);
-    assert.equal((await tokenFacet.totalSupply()).toString(), ownerBalance.toString());
-  });
+  it('Deployment should assign the total supply of tokens to the owner', async function () {
+    const owner = await ownershipFacet.owner()
+    const ownerBalance = await tokenFacet.balanceOf(owner)
+    assert.equal((await tokenFacet.totalSupply()).toString(), ownerBalance.toString())
+  })
 })
-
