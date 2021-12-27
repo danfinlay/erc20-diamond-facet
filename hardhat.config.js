@@ -14,6 +14,7 @@ task('accounts', 'Prints the list of accounts', async () => {
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
+const OPTIMISTIC_PRIVATE_KEY = process.env.OPTIMISTIC_PRIVATE_KEY;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -24,6 +25,12 @@ module.exports = {
     optimizer: {
       enabled: true,
       runs: 200
+    }
+  },
+  networks: {
+    optimism: {
+      url: 'https://mainnet.optimism.io/',
+      accounts: [`${OPTIMISTIC_PRIVATE_KEY}`],
     }
   }
 }
