@@ -13,22 +13,26 @@ import { IDiamondLoupe } from "../interfaces/IDiamondLoupe.sol";
 import { IDiamondCut } from "../interfaces/IDiamondCut.sol";
 import { IERC173 } from "../interfaces/IERC173.sol";
 import { IERC165 } from "../interfaces/IERC165.sol";
+import { IERC20 } from "contracts/solidstate-solidity/token/ERC20/IERC20.sol";
+import {ERC20MetadataStorage } from 'contracts/solidstate-solidity/token/ERC20/metadata/ERC20Metadata.sol';
 
 // It is exapected that this contract is customized if you want to deploy your diamond
 // with data from a deployment script. Use the init function to initialize state variables
 // of your diamond. Add parameters to the init funciton if you need to.
 
 contract DiamondInit {    
+    using ERC20MetadataStorage for ERC20MetadataStorage.Layout;
 
     // You can add parameters to this function in order to pass in 
     // data to set your own state variables
-    function init() external {
+    function init(string calldata name, string calldata symbol, uint8 decimals) external {
         // adding ERC165 data
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         ds.supportedInterfaces[type(IERC173).interfaceId] = true;
+        ds.supportedInterfaces[type(IERC20).interfaceId] = true;
 
         // add your own state variables 
         // EIP-2535 specifies that the `diamondCut` function takes two optional 
@@ -36,6 +40,11 @@ contract DiamondInit {
         // These arguments are used to execute an arbitrary function using delegatecall
         // in order to set state variables in the diamond during deployment or an upgrade
         // More info here: https://eips.ethereum.org/EIPS/eip-2535#diamond-interface 
+        ERC20MetadataStorage.Layout storage l = ERC20MetadataStorage.layout();
+
+        l.setName(name);
+        l.setSymbol(symbol);
+        l.setDecimals(decimals);
     }
 
 

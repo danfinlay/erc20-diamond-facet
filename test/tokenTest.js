@@ -28,7 +28,6 @@ describe('DiamondTest', async function () {
     diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
     ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
     tokenFacet = await ethers.getContractAt('ERC20Facet', diamondAddress)
-    await tokenFacet.setupERC20Token('TestToken', 'TTN', 18)
   })
 
   it('facets should have the right function selectors -- call to facetFunctionSelectors function', async () => {
