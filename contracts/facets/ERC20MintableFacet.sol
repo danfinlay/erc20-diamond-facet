@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import { LibDiamond } from "../libraries/LibDiamond.sol";
-import { ERC20BaseStorage } from './ERC20BaseStorage.sol';
+import { ERC20BaseStorage } from 'contracts/solidstate-solidity/token/ERC20/base/ERC20BaseStorage.sol';
 
 contract ERC20MintableFacet {
     event Transfer(address indexed from, address indexed to, uint256 value);
