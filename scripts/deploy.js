@@ -34,6 +34,7 @@ async function deployDiamond () {
     'DiamondLoupeFacet',
     'OwnershipFacet',
     'ERC20Facet',
+    'ERC20MintableFacet',
   ]
   const cut = []
   for (const FacetName of FacetNames) {
@@ -67,6 +68,10 @@ async function deployDiamond () {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
   }
   console.log('Completed diamond cut')
+
+  const loupe = await ethers.getContractAt('DiamondLoupeFacet', diamond.address)
+  const facets = await loupe.facets();
+  console.log('facets:', facets);
 
   return diamond.address
 }
