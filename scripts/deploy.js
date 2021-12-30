@@ -56,7 +56,11 @@ async function deployDiamond () {
   let tx
   let receipt
   // call to init function
-  let functionCall = diamondInit.interface.encodeFunctionData('init')
+  let functionCall = diamondInit.interface.encodeFunctionData('init', [
+    'MMGratitude',
+    'MMM',
+    18,
+  ]);
   tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall)
   console.log('Diamond cut tx: ', tx.hash)
   receipt = await tx.wait()
@@ -64,14 +68,6 @@ async function deployDiamond () {
     throw Error(`Diamond upgrade failed: ${tx.hash}`)
   }
   console.log('Completed diamond cut')
-
-  // Initiailize our token:
-  const token = await ethers.getContractAt('ERC20Facet', diamond.address)
-  await token.setupERC20Token(
-    'MMGratitude',
-    'MMM',
-    18
-  )
 
   return diamond.address
 }
