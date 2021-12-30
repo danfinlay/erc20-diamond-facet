@@ -11,12 +11,16 @@ const { deployDiamond } = require('../scripts/deploy.js')
 
 const { assert } = require('chai')
 
+const FACET_COUNT = 6
+
 describe('DiamondTest', async function () {
   let diamondAddress
   let diamondCutFacet
   let diamondLoupeFacet
   let ownershipFacet
   let tokenFacet
+  let batchFacet
+  let mintFacet
   let tx
   let receipt
   let result
@@ -28,14 +32,16 @@ describe('DiamondTest', async function () {
     diamondLoupeFacet = await ethers.getContractAt('DiamondLoupeFacet', diamondAddress)
     ownershipFacet = await ethers.getContractAt('OwnershipFacet', diamondAddress)
     tokenFacet = await ethers.getContractAt('ERC20Facet', diamondAddress)
+    batchFacet = await ethers.getContractAt('ERC20BatchFacet', diamondAddress)
+    mintFacet = await ethers.getContractAt('ERC20MintableFacet', diamondAddress)
   })
 
-  it('should have four facets -- call to facetAddresses function', async () => {
+  it(`should have ${FACET_COUNT} facets -- call to facetAddresses function`, async () => {
     for (const address of await diamondLoupeFacet.facetAddresses()) {
       addresses.push(address)
     }
 
-    assert.equal(addresses.length, 5)
+    assert.equal(addresses.length, FACET_COUNT)
   })
 
   it('facets should have the right function selectors -- call to facetFunctionSelectors function', async () => {
@@ -98,7 +104,7 @@ describe('DiamondTest', async function () {
   it('should replace supportsInterface function', async () => {
     const Test1Facet = await ethers.getContractFactory('Test1Facet')
     const selectors = getSelectors(Test1Facet).get(['supportsInterface(bytes4)'])
-    const testFacetAddress = addresses[5]
+    const testFacetAddress = addresses[FACET_COUNT]
     tx = await diamondCutFacet.diamondCut(
       [{
         facetAddress: testFacetAddress,
@@ -150,7 +156,7 @@ describe('DiamondTest', async function () {
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
-    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[6])
+    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[FACET_COUNT + 1])
     assert.sameMembers(result, getSelectors(test2Facet).get(functionsToKeep))
   })
 
@@ -169,7 +175,7 @@ describe('DiamondTest', async function () {
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
-    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[5])
+    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[FACET_COUNT])
     assert.sameMembers(result, getSelectors(test1Facet).get(functionsToKeep))
   })
 
@@ -246,8 +252,8 @@ describe('DiamondTest', async function () {
     }
     const facets = await diamondLoupeFacet.facets()
     const facetAddresses = await diamondLoupeFacet.facetAddresses()
-    assert.equal(facetAddresses.length, 7)
-    assert.equal(facets.length, 7)
+    assert.equal(facetAddresses.length, FACET_COUNT + 2)
+    assert.equal(facets.length, FACET_COUNT + 2)
     assert.sameMembers(facetAddresses, addresses)
     assert.equal(facets[0][0], facetAddresses[0], 'first facet')
     assert.equal(facets[1][0], facetAddresses[1], 'second facet')
@@ -263,3 +269,4 @@ describe('DiamondTest', async function () {
     assert.sameMembers(facets[findAddressPositionInFacets(addresses[5], facets)][1], getSelectors(ERC20Facet))
   })
 })
+
