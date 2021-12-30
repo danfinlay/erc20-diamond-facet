@@ -37,7 +37,7 @@ async function deployDiamond () {
   const diamondCut = await ethers.getContractAt('IDiamondCut', diamond.address)
   let tx
   let receipt
-  tx = await diamondCut.diamondCut(cut, diamond.address, '0x')
+  tx = await diamondCut.diamondCut(cut, ethers.constants.AddressZero, '0x')
   console.log('Diamond cut tx: ', tx.hash)
   receipt = await tx.wait()
   if (!receipt.status) {
