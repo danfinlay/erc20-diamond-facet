@@ -35,7 +35,7 @@ describe('DiamondTest', async function () {
       addresses.push(address)
     }
 
-    assert.equal(addresses.length, 4)
+    assert.equal(addresses.length, 5)
   })
 
   it('facets should have the right function selectors -- call to facetFunctionSelectors function', async () => {
@@ -98,7 +98,7 @@ describe('DiamondTest', async function () {
   it('should replace supportsInterface function', async () => {
     const Test1Facet = await ethers.getContractFactory('Test1Facet')
     const selectors = getSelectors(Test1Facet).get(['supportsInterface(bytes4)'])
-    const testFacetAddress = addresses[4]
+    const testFacetAddress = addresses[5]
     tx = await diamondCutFacet.diamondCut(
       [{
         facetAddress: testFacetAddress,
@@ -150,7 +150,7 @@ describe('DiamondTest', async function () {
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
-    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[5])
+    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[6])
     assert.sameMembers(result, getSelectors(test2Facet).get(functionsToKeep))
   })
 
@@ -169,7 +169,7 @@ describe('DiamondTest', async function () {
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`)
     }
-    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[4])
+    result = await diamondLoupeFacet.facetFunctionSelectors(addresses[5])
     assert.sameMembers(result, getSelectors(test1Facet).get(functionsToKeep))
   })
 
@@ -204,6 +204,7 @@ describe('DiamondTest', async function () {
     const Test1Facet = await ethers.getContractFactory('Test1Facet')
     const Test2Facet = await ethers.getContractFactory('Test2Facet')
     const ERC20Facet = await ethers.getContractFactory('ERC20Facet')
+    const ERC20BatchFacet = await ethers.getContractFactory('ERC20BatchFacet')
     // Any number of functions from any number of facets can be added/replaced/removed in a
     // single transaction
     const cut = [
@@ -231,6 +232,11 @@ describe('DiamondTest', async function () {
         facetAddress: addresses[5],
         action: FacetCutAction.Add,
         functionSelectors: getSelectors(ERC20Facet)
+      },
+      {
+        facetAddress: addresses[6],
+        action: FacetCutAction.Add,
+        functionSelectors: getSelectors(ERC20BatchFacet)
       }
     ]
     tx = await diamondCutFacet.diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 })
@@ -240,8 +246,8 @@ describe('DiamondTest', async function () {
     }
     const facets = await diamondLoupeFacet.facets()
     const facetAddresses = await diamondLoupeFacet.facetAddresses()
-    assert.equal(facetAddresses.length, 6)
-    assert.equal(facets.length, 6)
+    assert.equal(facetAddresses.length, 7)
+    assert.equal(facets.length, 7)
     assert.sameMembers(facetAddresses, addresses)
     assert.equal(facets[0][0], facetAddresses[0], 'first facet')
     assert.equal(facets[1][0], facetAddresses[1], 'second facet')

@@ -35,6 +35,7 @@ async function deployDiamond () {
     'OwnershipFacet',
     'ERC20Facet',
     'ERC20MintableFacet',
+    'ERC20BatchFacet'
   ]
   const cut = []
   for (const FacetName of FacetNames) {
